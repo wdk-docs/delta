@@ -1,3 +1,5 @@
+> 引用自 https://quilljs.com/docs/delta/
+
 # Delta [![Build Status](https://travis-ci.org/quilljs/delta.svg?branch=master)](http://travis-ci.org/quilljs/delta) [![Coverage Status](https://img.shields.io/coveralls/quilljs/delta.svg)](https://coveralls.io/r/quilljs/delta)
 
 Deltas are a simple, yet expressive format that can be used to describe contents and changes. The format is JSON based, and is human readable, yet easily parsible by machines. Deltas can describe any rich text document, includes all text and formatting information, without the ambiguity and complexity of HTML.
@@ -5,7 +7,6 @@ Deltas are a simple, yet expressive format that can be used to describe contents
 A Delta is made up of an [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of Operations, which describe changes to a document. They can be an [`insert`](#insert-operation), [`delete`](#delete-operation) or [`retain`](#retain-operation). Note operations do not take an index. They always describe the change at the current index. Use retains to "keep" or "skip" certain parts of the document.
 
 Don’t be confused by its name Delta&mdash;Deltas represents both documents and changes to documents. If you think of Deltas as the instructions from going from one document to another, the way Deltas represent a document is by expressing the instructions starting from an empty document.
-
 
 ## Quick Example
 
@@ -15,15 +16,16 @@ Don’t be confused by its name Delta&mdash;Deltas represents both documents and
 const delta = new Delta([
   { insert: 'Gandalf', attributes: { bold: true } },
   { insert: ' the ' },
-  { insert: 'Grey', attributes: { color: '#ccc' } }
+  { insert: 'Grey', attributes: { color: '#ccc' } },
 ]);
 
 // Change intended to be applied to above:
 // Keep the first 12 characters, delete the next 4,
 // and insert a white 'White'
-const death = new Delta().retain(12)
-                         .delete(4)
-                         .insert('White', { color: '#fff' });
+const death = new Delta()
+  .retain(12)
+  .delete(4)
+  .insert('White', { color: '#fff' });
 // {
 //   ops: [
 //     { retain: 12 },
@@ -41,13 +43,11 @@ const restored = delta.compose(death);
 //     { insert: 'White', attributes: { color: '#fff' } }
 //   ]
 // }
-
 ```
 
 This README describes Deltas in its general form and API functionality. Additional information on the way Quill specifically uses Deltas can be found on its own [Delta docs](http://quilljs.com/docs/delta/). A walkthough of the motivation and design thinking behind Deltas are on [Designing the Delta Format](http://quilljs.com/guides/designing-the-delta-format/).
 
 This format is suitable for [Operational Transform](https://en.wikipedia.org/wiki/Operational_transformation) and defines several functions to support this use case.
-
 
 ## Contents
 
@@ -88,7 +88,6 @@ These methods called on or with non-document Deltas will result in undefined beh
 - [`compose`](#compose)
 - [`transform`](#transform)
 - [`transformPosition`](#transformposition)
-
 
 ## Operations
 
@@ -134,7 +133,7 @@ Delete operations have a Number `delete` key defined representing the number of 
 
 Retain operations have a Number `retain` key defined representing the number of characters to keep (other libraries might use the name keep or skip). An optional `attributes` key can be defined with an Object to describe formatting changes to the character range. A value of `null` in the `attributes` Object represents removal of that key.
 
-*Note: It is not necessary to retain the last characters of a document as this is implied.*
+_Note: It is not necessary to retain the last characters of a document as this is implied._
 
 ```js
 // Keep the next 5 characters
@@ -148,7 +147,6 @@ Retain operations have a Number `retain` key defined representing the number of 
 // in the next 5 characters
 { retain: 5, attributes: { bold: null } }
 ```
-
 
 ## Construction
 
@@ -167,14 +165,14 @@ Creates a new Delta object.
 - `ops` - Array of operations
 - `delta` - Object with an `ops` key set to an array of operations
 
-*Note: No validity/sanity check is performed when constructed with ops or delta. The new delta's internal ops array will also be assigned from ops or delta.ops without deep copying.*
+_Note: No validity/sanity check is performed when constructed with ops or delta. The new delta's internal ops array will also be assigned from ops or delta.ops without deep copying._
 
 #### Example
 
 ```js
 const delta = new Delta([
   { insert: 'Hello World' },
-  { insert: '!', attributes: { bold: true }}
+  { insert: '!', attributes: { bold: true } },
 ]);
 
 const packet = JSON.stringify(delta);
@@ -273,7 +271,6 @@ Returns a new Delta representing the concatenation of this and another document 
 const a = new Delta().insert('Hello');
 const b = new Delta().insert('!', { bold: true });
 
-
 // {
 //   ops: [
 //     { insert: 'Hello' },
@@ -287,7 +284,7 @@ const concat = a.concat(b);
 
 ### diff()
 
-Returns a Delta representing the difference between two documents. Optionally, accepts a suggested index where change took place, often representing a cursor position *before* change.
+Returns a Delta representing the difference between two documents. Optionally, accepts a suggested index where change took place, often representing a cursor position _before_ change.
 
 #### Methods
 
@@ -309,9 +306,8 @@ Returns a Delta representing the difference between two documents. Optionally, a
 const a = new Delta().insert('Hello');
 const b = new Delta().insert('Hello!');
 
-const diff = a.diff(b);  // { ops: [{ retain: 5 }, { insert: '!' }] }
-                         // a.compose(diff) == b
-
+const diff = a.diff(b); // { ops: [{ retain: 5 }, { insert: '!' }] }
+// a.compose(diff) == b
 ```
 
 ---
@@ -332,11 +328,12 @@ Iterates through document Delta, calling a given function with a Delta and attri
 #### Example
 
 ```js
-const delta = new Delta().insert('Hello\n\n')
-                         .insert('World')
-                         .insert({ image: 'octocat.png' })
-                         .insert('\n', { align: 'right' })
-                         .insert('!');
+const delta = new Delta()
+  .insert('Hello\n\n')
+  .insert('World')
+  .insert({ image: 'octocat.png' })
+  .insert('\n', { align: 'right' })
+  .insert('!');
 
 delta.eachLine((line, attributes, i) => {
   console.log(line, attributes, i);
@@ -370,18 +367,19 @@ Returned an inverted delta that has the opposite effect of against a base docume
 #### Example
 
 ```js
-const base = new Delta().insert('Hello\n')
-                        .insert('World');
-const delta = new Delta().retain(6, { bold: true }).delete(5).insert('!');
+const base = new Delta().insert('Hello\n').insert('World');
+const delta = new Delta()
+  .retain(6, { bold: true })
+  .delete(5)
+  .insert('!');
 
-const inverted = delta.invert(base);  // { ops: [
-                                      //   { retain: 6, attributes: { bold: null } },
-                                      //   { insert: 'World' },
-                                      //   { delete: 1 }
-                                      // ]}
-                                      // base.compose(delta).compose(inverted) === base
+const inverted = delta.invert(base); // { ops: [
+//   { retain: 6, attributes: { bold: null } },
+//   { insert: 'World' },
+//   { delete: 1 }
+// ]}
+// base.compose(delta).compose(inverted) === base
 ```
-
 
 ## Utility
 
@@ -404,13 +402,14 @@ Returns an array of operations that passes a given function.
 #### Example
 
 ```js
-const delta = new Delta().insert('Hello', { bold: true })
-                         .insert({ image: 'https://octodex.github.com/images/labtocat.png' })
-                         .insert('World!');
+const delta = new Delta()
+  .insert('Hello', { bold: true })
+  .insert({ image: 'https://octodex.github.com/images/labtocat.png' })
+  .insert('World!');
 
 const text = delta
-  .filter((op) => typeof op.insert === 'string')
-  .map((op) => op.insert)
+  .filter(op => typeof op.insert === 'string')
+  .map(op => op.insert)
   .join('');
 ```
 
@@ -431,7 +430,7 @@ Iterates through operations, calling the provided function for each operation.
 #### Example
 
 ```js
-delta.forEach((op) => {
+delta.forEach(op => {
   console.log(op);
 });
 ```
@@ -449,9 +448,12 @@ Returns length of a Delta, which is the sum of the lengths of its operations.
 #### Example
 
 ```js
-new Delta().insert('Hello').length();  // Returns 5
+new Delta().insert('Hello').length(); // Returns 5
 
-new Delta().insert('A').retain(2).delete(1) // Returns 4
+new Delta()
+  .insert('A')
+  .retain(2)
+  .delete(1); // Returns 4
 ```
 
 ---
@@ -475,12 +477,13 @@ Returns a new array with the results of calling provided function on each operat
 #### Example
 
 ```js
-const delta = new Delta().insert('Hello', { bold: true })
-                         .insert({ image: 'https://octodex.github.com/images/labtocat.png' })
-                         .insert('World!');
+const delta = new Delta()
+  .insert('Hello', { bold: true })
+  .insert({ image: 'https://octodex.github.com/images/labtocat.png' })
+  .insert('World!');
 
 const text = delta
-  .map((op) => {
+  .map(op => {
     if (typeof op.insert === 'string') {
       return op.insert;
     } else {
@@ -511,14 +514,15 @@ Create an array of two arrays, the first with operations that pass the given fun
 #### Example
 
 ```js
-const delta = new Delta().insert('Hello', { bold: true })
-                         .insert({ image: 'https://octodex.github.com/images/labtocat.png' })
-                         .insert('World!');
+const delta = new Delta()
+  .insert('Hello', { bold: true })
+  .insert({ image: 'https://octodex.github.com/images/labtocat.png' })
+  .insert('World!');
 
-const results = delta.partition((op) => typeof op.insert === 'string');
-const passed = results[0];  // [{ insert: 'Hello', attributes: { bold: true }},
-                            //  { insert: 'World'}]
-const failed = results[1];  // [{ insert: { image: 'https://octodex.github.com/images/labtocat.png' }}]
+const results = delta.partition(op => typeof op.insert === 'string');
+const passed = results[0]; // [{ insert: 'Hello', attributes: { bold: true }},
+//  { insert: 'World'}]
+const failed = results[1]; // [{ insert: { image: 'https://octodex.github.com/images/labtocat.png' }}]
 ```
 
 ---
@@ -589,7 +593,6 @@ const world = delta.slice(6);
 const space = delta.slice(5, 6);
 ```
 
-
 ## Operational Transform
 
 ### compose()
@@ -610,8 +613,7 @@ Returns a Delta that is equivalent to applying the operations of own Delta, foll
 const a = new Delta().insert('abc');
 const b = new Delta().retain(1).delete(1);
 
-const composed = a.compose(b);  // composed == new Delta().insert('ac');
-
+const composed = a.compose(b); // composed == new Delta().insert('ac');
 ```
 
 ---
@@ -639,9 +641,12 @@ Transform given Delta against own operations.
 
 ```js
 const a = new Delta().insert('a');
-const b = new Delta().insert('b').retain(5).insert('c');
+const b = new Delta()
+  .insert('b')
+  .retain(5)
+  .insert('c');
 
-a.transform(b, true);  // new Delta().retain(1).insert('b').retain(5).insert('c');
+a.transform(b, true); // new Delta().retain(1).insert('b').retain(5).insert('c');
 a.transform(b, false); // new Delta().insert('b').retain(6).insert('c');
 ```
 
