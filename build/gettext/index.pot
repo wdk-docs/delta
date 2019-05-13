@@ -1,0 +1,636 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Band Cap
+# This file is distributed under the same license as the delta-docs package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: delta-docs \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-13 15:30+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/index.md:1
+msgid "Delta"
+msgstr ""
+
+#: ../../source/index.md:6
+msgid "Deltas are a simple, yet expressive format that can be used to describe contents and changes. The format is JSON based, and is human readable, yet easily parsible by machines. Deltas can describe any rich text document, includes all text and formatting information, without the ambiguity and complexity of HTML."
+msgstr ""
+
+#: ../../source/index.md:8
+msgid "A Delta is made up of an Array of Operations, which describe changes to a document. They can be an insert, delete or retain. Note operations do not take an index. They always describe the change at the current index. Use retains to \"keep\" or \"skip\" certain parts of the document."
+msgstr ""
+
+#: ../../source/index.md:10
+msgid "Don’t be confused by its name Delta—Deltas represents both documents and changes to documents. If you think of Deltas as the instructions from going from one document to another, the way Deltas represent a document is by expressing the instructions starting from an empty document."
+msgstr ""
+
+#: ../../source/index.md:12
+msgid "Quick Example"
+msgstr ""
+
+#: ../../source/index.md:49
+msgid "This README describes Deltas in its general form and API functionality. Additional information on the way Quill specifically uses Deltas can be found on its own Delta docs. A walkthough of the motivation and design thinking behind Deltas are on Designing the Delta Format."
+msgstr ""
+
+#: ../../source/index.md:51
+msgid "This format is suitable for Operational Transform and defines several functions to support this use case."
+msgstr ""
+
+#: ../../source/index.md:53
+msgid "Contents"
+msgstr ""
+
+#: ../../source/index.md:55
+#: ../../source/index.md:93
+msgid "Operations"
+msgstr ""
+
+#: ../../source/index.md:57
+#: ../../source/index.md:64
+msgid "insert"
+msgstr ""
+
+#: ../../source/index.md:58
+#: ../../source/index.md:65
+msgid "delete"
+msgstr ""
+
+#: ../../source/index.md:59
+#: ../../source/index.md:66
+msgid "retain"
+msgstr ""
+
+#: ../../source/index.md:61
+#: ../../source/index.md:152
+msgid "Construction"
+msgstr ""
+
+#: ../../source/index.md:63
+#: ../../source/index.md:154
+msgid "constructor"
+msgstr ""
+
+#: ../../source/index.md:68
+#: ../../source/index.md:251
+msgid "Documents"
+msgstr ""
+
+#: ../../source/index.md:70
+msgid "These methods called on or with non-document Deltas will result in undefined behavior."
+msgstr ""
+
+#: ../../source/index.md:72
+msgid "concat"
+msgstr ""
+
+#: ../../source/index.md:73
+msgid "diff"
+msgstr ""
+
+#: ../../source/index.md:74
+msgid "eachLine"
+msgstr ""
+
+#: ../../source/index.md:75
+msgid "invert"
+msgstr ""
+
+#: ../../source/index.md:77
+#: ../../source/index.md:385
+msgid "Utility"
+msgstr ""
+
+#: ../../source/index.md:79
+msgid "filter"
+msgstr ""
+
+#: ../../source/index.md:80
+msgid "forEach"
+msgstr ""
+
+#: ../../source/index.md:81
+msgid "length"
+msgstr ""
+
+#: ../../source/index.md:82
+msgid "map"
+msgstr ""
+
+#: ../../source/index.md:83
+msgid "partition"
+msgstr ""
+
+#: ../../source/index.md:84
+msgid "reduce"
+msgstr ""
+
+#: ../../source/index.md:85
+msgid "slice"
+msgstr ""
+
+#: ../../source/index.md:87
+#: ../../source/index.md:597
+msgid "Operational Transform"
+msgstr ""
+
+#: ../../source/index.md:89
+msgid "compose"
+msgstr ""
+
+#: ../../source/index.md:90
+msgid "transform"
+msgstr ""
+
+#: ../../source/index.md:91
+msgid "transformPosition"
+msgstr ""
+
+#: ../../source/index.md:95
+msgid "Insert Operation"
+msgstr ""
+
+#: ../../source/index.md:97
+msgid "Insert operations have an insert key defined. A String value represents inserting text. Any other type represents inserting an embed (however only one level of object comparison will be performed for equality)."
+msgstr ""
+
+#: ../../source/index.md:99
+msgid "In both cases of text and embeds, an optional attributes key can be defined with an Object to describe additonal formatting information. Formats can be changed by the retain operation."
+msgstr ""
+
+#: ../../source/index.md:124
+msgid "Delete Operation"
+msgstr ""
+
+#: ../../source/index.md:126
+msgid "Delete operations have a Number delete key defined representing the number of characters to delete. All embeds have a length of 1."
+msgstr ""
+
+#: ../../source/index.md:133
+msgid "Retain Operation"
+msgstr ""
+
+#: ../../source/index.md:135
+msgid "Retain operations have a Number retain key defined representing the number of characters to keep (other libraries might use the name keep or skip). An optional attributes key can be defined with an Object to describe formatting changes to the character range. A value of null in the attributes Object represents removal of that key."
+msgstr ""
+
+#: ../../source/index.md:137
+msgid "Note: It is not necessary to retain the last characters of a document as this is implied."
+msgstr ""
+
+#: ../../source/index.md:156
+msgid "Creates a new Delta object."
+msgstr ""
+
+#: ../../source/index.md:158
+#: ../../source/index.md:192
+#: ../../source/index.md:216
+#: ../../source/index.md:236
+#: ../../source/index.md:257
+#: ../../source/index.md:290
+#: ../../source/index.md:320
+#: ../../source/index.md:356
+#: ../../source/index.md:391
+#: ../../source/index.md:423
+#: ../../source/index.md:445
+#: ../../source/index.md:466
+#: ../../source/index.md:503
+#: ../../source/index.md:535
+#: ../../source/index.md:566
+#: ../../source/index.md:603
+#: ../../source/index.md:626
+#: ../../source/index.md:660
+msgid "Methods"
+msgstr ""
+
+#: ../../source/index.md:160
+msgid "new Delta()"
+msgstr ""
+
+#: ../../source/index.md:161
+msgid "new Delta(ops)"
+msgstr ""
+
+#: ../../source/index.md:162
+msgid "new Delta(delta)"
+msgstr ""
+
+#: ../../source/index.md:164
+#: ../../source/index.md:197
+#: ../../source/index.md:220
+#: ../../source/index.md:240
+#: ../../source/index.md:261
+#: ../../source/index.md:295
+#: ../../source/index.md:324
+#: ../../source/index.md:360
+#: ../../source/index.md:395
+#: ../../source/index.md:427
+#: ../../source/index.md:470
+#: ../../source/index.md:507
+#: ../../source/index.md:539
+#: ../../source/index.md:572
+#: ../../source/index.md:607
+#: ../../source/index.md:631
+#: ../../source/index.md:664
+msgid "Parameters"
+msgstr ""
+
+#: ../../source/index.md:166
+msgid "ops - Array of operations"
+msgstr ""
+
+#: ../../source/index.md:167
+msgid "delta - Object with an ops key set to an array of operations"
+msgstr ""
+
+#: ../../source/index.md:169
+msgid "Note: No validity/sanity check is performed when constructed with ops or delta. The new delta's internal ops array will also be assigned from ops or delta.ops without deep copying."
+msgstr ""
+
+#: ../../source/index.md:171
+#: ../../source/index.md:203
+#: ../../source/index.md:224
+#: ../../source/index.md:245
+#: ../../source/index.md:269
+#: ../../source/index.md:304
+#: ../../source/index.md:329
+#: ../../source/index.md:368
+#: ../../source/index.md:403
+#: ../../source/index.md:431
+#: ../../source/index.md:449
+#: ../../source/index.md:478
+#: ../../source/index.md:515
+#: ../../source/index.md:548
+#: ../../source/index.md:577
+#: ../../source/index.md:611
+#: ../../source/index.md:641
+#: ../../source/index.md:672
+msgid "Example"
+msgstr ""
+
+#: ../../source/index.md:188
+msgid "insert()"
+msgstr ""
+
+#: ../../source/index.md:190
+msgid "Appends an insert operation. Returns this for chainability."
+msgstr ""
+
+#: ../../source/index.md:194
+msgid "insert(text, attributes)"
+msgstr ""
+
+#: ../../source/index.md:195
+msgid "insert(embed, attributes)"
+msgstr ""
+
+#: ../../source/index.md:199
+msgid "text - String representing text to insert"
+msgstr ""
+
+#: ../../source/index.md:200
+msgid "embed - Object representing embed type to insert"
+msgstr ""
+
+#: ../../source/index.md:201
+#: ../../source/index.md:243
+msgid "attributes - Optional attributes to apply"
+msgstr ""
+
+#: ../../source/index.md:212
+msgid "delete()"
+msgstr ""
+
+#: ../../source/index.md:214
+msgid "Appends a delete operation. Returns this for chainability."
+msgstr ""
+
+#: ../../source/index.md:218
+msgid "delete(length)"
+msgstr ""
+
+#: ../../source/index.md:222
+msgid "length - Number of characters to delete"
+msgstr ""
+
+#: ../../source/index.md:232
+msgid "retain()"
+msgstr ""
+
+#: ../../source/index.md:234
+msgid "Appends a retain operation. Returns this for chainability."
+msgstr ""
+
+#: ../../source/index.md:238
+msgid "retain(length, attributes)"
+msgstr ""
+
+#: ../../source/index.md:242
+msgid "length - Number of characters to retain"
+msgstr ""
+
+#: ../../source/index.md:253
+msgid "concat()"
+msgstr ""
+
+#: ../../source/index.md:255
+msgid "Returns a new Delta representing the concatenation of this and another document Delta's operations."
+msgstr ""
+
+#: ../../source/index.md:259
+msgid "concat(other)"
+msgstr ""
+
+#: ../../source/index.md:263
+msgid "other - Document Delta to concatenate"
+msgstr ""
+
+#: ../../source/index.md:265
+#: ../../source/index.md:300
+#: ../../source/index.md:364
+#: ../../source/index.md:399
+#: ../../source/index.md:474
+#: ../../source/index.md:511
+#: ../../source/index.md:544
+#: ../../source/index.md:637
+#: ../../source/index.md:668
+msgid "Returns"
+msgstr ""
+
+#: ../../source/index.md:267
+msgid "Delta - Concatenated document Delta"
+msgstr ""
+
+#: ../../source/index.md:286
+msgid "diff()"
+msgstr ""
+
+#: ../../source/index.md:288
+msgid "Returns a Delta representing the difference between two documents. Optionally, accepts a suggested index where change took place, often representing a cursor position before change."
+msgstr ""
+
+#: ../../source/index.md:292
+msgid "diff(other)"
+msgstr ""
+
+#: ../../source/index.md:293
+msgid "diff(other, index)"
+msgstr ""
+
+#: ../../source/index.md:297
+msgid "other - Document Delta to diff against"
+msgstr ""
+
+#: ../../source/index.md:298
+msgid "index - Suggested index where change took place"
+msgstr ""
+
+#: ../../source/index.md:302
+msgid "Delta - difference between the two documents"
+msgstr ""
+
+#: ../../source/index.md:316
+msgid "eachLine()"
+msgstr ""
+
+#: ../../source/index.md:318
+msgid "Iterates through document Delta, calling a given function with a Delta and attributes object, representing the line segment."
+msgstr ""
+
+#: ../../source/index.md:322
+msgid "eachLine(predicate, newline)"
+msgstr ""
+
+#: ../../source/index.md:326
+msgid "predicate - function to call on each line group"
+msgstr ""
+
+#: ../../source/index.md:327
+msgid "newline - newline character, defaults to \\n"
+msgstr ""
+
+#: ../../source/index.md:352
+msgid "invert()"
+msgstr ""
+
+#: ../../source/index.md:354
+msgid "Returned an inverted delta that has the opposite effect of against a base document delta. That is base.compose(delta).compose(inverted) === base."
+msgstr ""
+
+#: ../../source/index.md:358
+msgid "invert(base)"
+msgstr ""
+
+#: ../../source/index.md:362
+msgid "base - Document delta to invert against"
+msgstr ""
+
+#: ../../source/index.md:366
+msgid "Delta - inverted delta against the base delta"
+msgstr ""
+
+#: ../../source/index.md:387
+msgid "filter()"
+msgstr ""
+
+#: ../../source/index.md:389
+msgid "Returns an array of operations that passes a given function."
+msgstr ""
+
+#: ../../source/index.md:393
+msgid "filter(predicate)"
+msgstr ""
+
+#: ../../source/index.md:397
+msgid "predicate - Function to test each operation against. Return true to keep the operation, false otherwise."
+msgstr ""
+
+#: ../../source/index.md:401
+msgid "Array - Filtered resulting array"
+msgstr ""
+
+#: ../../source/index.md:419
+msgid "forEach()"
+msgstr ""
+
+#: ../../source/index.md:421
+msgid "Iterates through operations, calling the provided function for each operation."
+msgstr ""
+
+#: ../../source/index.md:425
+msgid "forEach(predicate)"
+msgstr ""
+
+#: ../../source/index.md:429
+msgid "predicate - Function to call during iteration, passing in the current operation."
+msgstr ""
+
+#: ../../source/index.md:441
+#: ../../source/index.md:447
+msgid "length()"
+msgstr ""
+
+#: ../../source/index.md:443
+msgid "Returns length of a Delta, which is the sum of the lengths of its operations."
+msgstr ""
+
+#: ../../source/index.md:462
+msgid "map()"
+msgstr ""
+
+#: ../../source/index.md:464
+msgid "Returns a new array with the results of calling provided function on each operation."
+msgstr ""
+
+#: ../../source/index.md:468
+msgid "map(predicate)"
+msgstr ""
+
+#: ../../source/index.md:472
+msgid "predicate - Function to call, passing in the current operation, returning an element of the new array to be returned"
+msgstr ""
+
+#: ../../source/index.md:476
+msgid "Array - A new array with each element being the result of the given function."
+msgstr ""
+
+#: ../../source/index.md:499
+msgid "partition()"
+msgstr ""
+
+#: ../../source/index.md:501
+msgid "Create an array of two arrays, the first with operations that pass the given function, the other that failed."
+msgstr ""
+
+#: ../../source/index.md:505
+msgid "partition(predicate)"
+msgstr ""
+
+#: ../../source/index.md:509
+msgid "predicate - Function to call, passing in the current operation, returning whether that operation passed"
+msgstr ""
+
+#: ../../source/index.md:513
+msgid "Array - A new array of two Arrays, the first with passed operations, the other with failed operations"
+msgstr ""
+
+#: ../../source/index.md:531
+msgid "reduce()"
+msgstr ""
+
+#: ../../source/index.md:533
+msgid "Applies given function against an accumulator and each operation to reduce to a single value."
+msgstr ""
+
+#: ../../source/index.md:537
+msgid "reduce(predicate, initialValue)"
+msgstr ""
+
+#: ../../source/index.md:541
+msgid "predicate - Function to call per iteration, returning an accumulated value"
+msgstr ""
+
+#: ../../source/index.md:542
+msgid "initialValue - Initial value to pass to first call to predicate"
+msgstr ""
+
+#: ../../source/index.md:546
+msgid "any - the accumulated value"
+msgstr ""
+
+#: ../../source/index.md:562
+#: ../../source/index.md:568
+msgid "slice()"
+msgstr ""
+
+#: ../../source/index.md:564
+msgid "Returns copy of delta with subset of operations."
+msgstr ""
+
+#: ../../source/index.md:569
+msgid "slice(start)"
+msgstr ""
+
+#: ../../source/index.md:570
+msgid "slice(start, end)"
+msgstr ""
+
+#: ../../source/index.md:574
+msgid "start - Start index of subset, defaults to 0"
+msgstr ""
+
+#: ../../source/index.md:575
+msgid "end - End index of subset, defaults to rest of operations"
+msgstr ""
+
+#: ../../source/index.md:599
+msgid "compose()"
+msgstr ""
+
+#: ../../source/index.md:601
+msgid "Returns a Delta that is equivalent to applying the operations of own Delta, followed by another Delta."
+msgstr ""
+
+#: ../../source/index.md:605
+msgid "compose(other)"
+msgstr ""
+
+#: ../../source/index.md:609
+msgid "other - Delta to compose"
+msgstr ""
+
+#: ../../source/index.md:622
+msgid "transform()"
+msgstr ""
+
+#: ../../source/index.md:624
+msgid "Transform given Delta against own operations."
+msgstr ""
+
+#: ../../source/index.md:628
+msgid "transform(other, priority = false)"
+msgstr ""
+
+#: ../../source/index.md:629
+msgid "transform(index, priority = false) - Alias for transformPosition"
+msgstr ""
+
+#: ../../source/index.md:633
+msgid "other - Delta to transform"
+msgstr ""
+
+#: ../../source/index.md:634
+msgid "priority - Boolean used to break ties. If true, then this takes priority over other, that is, its actions are considered to happen \"first.\""
+msgstr ""
+
+#: ../../source/index.md:639
+msgid "Delta - transformed Delta"
+msgstr ""
+
+#: ../../source/index.md:656
+msgid "transformPosition()"
+msgstr ""
+
+#: ../../source/index.md:658
+msgid "Transform an index against the delta. Useful for representing cursor/selection positions."
+msgstr ""
+
+#: ../../source/index.md:662
+msgid "transformPosition(index, priority = false)"
+msgstr ""
+
+#: ../../source/index.md:666
+msgid "index - index to transform"
+msgstr ""
+
+#: ../../source/index.md:670
+msgid "Number - transformed index"
+msgstr ""
+

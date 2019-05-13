@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Delta &#8212; delta-docs 2.0.19 文档</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="delta 文档" href="contents.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="delta">
+<h1>Delta<a class="headerlink" href="#delta" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="http://travis-ci.org/quilljs/delta"><img alt="https://travis-ci.org/quilljs/delta.svg?branch=master" src="https://travis-ci.org/quilljs/delta.svg?branch=master" />Build Status</a>
+<a class="reference external" href="https://coveralls.io/r/quilljs/delta"><img alt="https://img.shields.io/coveralls/quilljs/delta.svg" src="https://img.shields.io/coveralls/quilljs/delta.svg" />Coverage Status</a></p>
+<p>Deltas是一种简单但富有表现力的格式，可用于描述内容和变化。 格式基于JSON，是人类可读的，但很容易被机器解析。 Deltas可以描述任何富文本文档，包括所有文本和格式信息，而不会产生HTML的模糊性和复杂性。</p>
+<p>Delta由一组操作组成，用于描述文档的更改。 它们可以是插入，删除或保留。 注意操作不带索引。 他们总是描述当前指数的变化。使用保留来“保持”或“跳过”文档的某些部分。</p>
+<p>不要被其名称混淆Delta-Deltas代表文档和文档更改。如果您将Deltas视为从一个文档转到另一个文档的指令，则Deltas表示文档的方式是从空文档开始表达指令。</p>
+<div class="section" id="quick-example">
+<h2>快速示例<a class="headerlink" href="#quick-example" title="永久链接至标题">¶</a></h2>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// Document with text &quot;Gandalf the Grey&quot;</span>
+<span class="c1">// with &quot;Gandalf&quot; bolded, and &quot;Grey&quot; in grey</span>
+<span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">([</span>
+  <span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s1">&#39;Gandalf&#39;</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s1">&#39; the &#39;</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s1">&#39;Grey&#39;</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;#ccc&#39;</span> <span class="p">}</span> <span class="p">},</span>
+<span class="p">]);</span>
+
+<span class="c1">// Change intended to be applied to above:</span>
+<span class="c1">// Keep the first 12 characters, delete the next 4,</span>
+<span class="c1">// and insert a white &#39;White&#39;</span>
+<span class="kr">const</span> <span class="nx">death</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">retain</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+  <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;White&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;#fff&#39;</span> <span class="p">});</span>
+<span class="c1">// {</span>
+<span class="c1">//   ops: [</span>
+<span class="c1">//     { retain: 12 },</span>
+<span class="c1">//     { delete: 4 },</span>
+<span class="c1">//     { insert: &#39;White&#39;, attributes: { color: &#39;#fff&#39; } }</span>
+<span class="c1">//   ]</span>
+<span class="c1">// }</span>
+
+<span class="c1">// Applying the above:</span>
+<span class="kr">const</span> <span class="nx">restored</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">compose</span><span class="p">(</span><span class="nx">death</span><span class="p">);</span>
+<span class="c1">// {</span>
+<span class="c1">//   ops: [</span>
+<span class="c1">//     { insert: &#39;Gandalf &#39;, attributes: { bold: true } },</span>
+<span class="c1">//     { insert: &#39;the &#39; },</span>
+<span class="c1">//     { insert: &#39;White&#39;, attributes: { color: &#39;#fff&#39; } }</span>
+<span class="c1">//   ]</span>
+<span class="c1">// }</span>
+</pre></div>
+</div>
+<p>本自述文件以其一般形式和API功能描述了Deltas。 关于Quill特别使用Deltas的方式的其他信息可以在其自己的Delta文档中找到。Deltas背后的动机和设计思想的演练是设计Delta格式。</p>
+<p>此格式适用于Operational Transform，并定义了几个函数来支持此用例。</p>
+</div>
+<div class="section" id="contents">
+<h2>内容<a class="headerlink" href="#contents" title="永久链接至标题">¶</a></h2>
+<div class="section" id="operations">
+<h3>操作<a class="headerlink" href="#operations" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="#insert-operation"><code class="docutils literal notranslate"><span class="pre">insert</span></code></a></p></li>
+<li><p><a class="reference external" href="#delete-operation"><code class="docutils literal notranslate"><span class="pre">delete</span></code></a></p></li>
+<li><p><a class="reference external" href="#retain-operation"><code class="docutils literal notranslate"><span class="pre">retain</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="construction">
+<h3>构造<a class="headerlink" href="#construction" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="#constructor"><code class="docutils literal notranslate"><span class="pre">constructor</span></code></a></p></li>
+<li><p><a class="reference external" href="#insert"><code class="docutils literal notranslate"><span class="pre">insert</span></code></a></p></li>
+<li><p><a class="reference external" href="#delete"><code class="docutils literal notranslate"><span class="pre">delete</span></code></a></p></li>
+<li><p><a class="reference external" href="#retain"><code class="docutils literal notranslate"><span class="pre">retain</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="documents">
+<h3>文档<a class="headerlink" href="#documents" title="永久链接至标题">¶</a></h3>
+<p>调用或使用非文档Deltas的这些方法将导致未定义的行为。</p>
+<ul class="simple">
+<li><p><a class="reference external" href="#concat"><code class="docutils literal notranslate"><span class="pre">concat</span></code></a></p></li>
+<li><p><a class="reference external" href="#diff"><code class="docutils literal notranslate"><span class="pre">diff</span></code></a></p></li>
+<li><p><a class="reference external" href="#eachline"><code class="docutils literal notranslate"><span class="pre">eachLine</span></code></a></p></li>
+<li><p><a class="reference external" href="#invert"><code class="docutils literal notranslate"><span class="pre">invert</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="utility">
+<h3>效用<a class="headerlink" href="#utility" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="#filter"><code class="docutils literal notranslate"><span class="pre">filter</span></code></a></p></li>
+<li><p><a class="reference external" href="#foreach"><code class="docutils literal notranslate"><span class="pre">forEach</span></code></a></p></li>
+<li><p><a class="reference external" href="#length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></p></li>
+<li><p><a class="reference external" href="#map"><code class="docutils literal notranslate"><span class="pre">map</span></code></a></p></li>
+<li><p><a class="reference external" href="#partition"><code class="docutils literal notranslate"><span class="pre">partition</span></code></a></p></li>
+<li><p><a class="reference external" href="#reduce"><code class="docutils literal notranslate"><span class="pre">reduce</span></code></a></p></li>
+<li><p><a class="reference external" href="#slice"><code class="docutils literal notranslate"><span class="pre">slice</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="operational-transform">
+<h3>运营转型<a class="headerlink" href="#operational-transform" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="#compose"><code class="docutils literal notranslate"><span class="pre">compose</span></code></a></p></li>
+<li><p><a class="reference external" href="#transform"><code class="docutils literal notranslate"><span class="pre">transform</span></code></a></p></li>
+<li><p><a class="reference external" href="#transformposition"><code class="docutils literal notranslate"><span class="pre">transformPosition</span></code></a></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>操作<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="section" id="insert-operation">
+<h3>插入操作<a class="headerlink" href="#insert-operation" title="永久链接至标题">¶</a></h3>
+<p>插入操作定义了插入键。 String值表示插入文本。任何其他类型表示插入嵌入（但是只会执行一级对象比较以获得相等性）。</p>
+<p>在文本和嵌入的两种情况下，可以使用Object定义可选属性键以描述附加格式信息。 可以通过retain操作更改格式。</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// Insert a bolded &quot;Text&quot;</span>
+<span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s2">&quot;Text&quot;</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// Insert a link</span>
+<span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s2">&quot;Google&quot;</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">link</span><span class="o">:</span> <span class="s1">&#39;https://www.google.com&#39;</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// Insert an embed</span>
+<span class="p">{</span>
+  <span class="nx">insert</span><span class="o">:</span> <span class="p">{</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;https://octodex.github.com/images/labtocat.png&#39;</span> <span class="p">},</span>
+  <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">alt</span><span class="o">:</span> <span class="s2">&quot;Lab Octocat&quot;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Insert another embed</span>
+<span class="p">{</span>
+  <span class="nx">insert</span><span class="o">:</span> <span class="p">{</span> <span class="nx">video</span><span class="o">:</span> <span class="s1">&#39;https://www.youtube.com/watch?v=dMH0bHeiRNg&#39;</span> <span class="p">},</span>
+  <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">width</span><span class="o">:</span> <span class="mi">420</span><span class="p">,</span>
+    <span class="nx">height</span><span class="o">:</span> <span class="mi">315</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-operation">
+<h3>删除操作<a class="headerlink" href="#delete-operation" title="永久链接至标题">¶</a></h3>
+<p>删除操作定义了一个数字删除键，表示要删除的字符数。所有嵌入的长度均为1。</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// Delete the next 10 characters</span>
+<span class="p">{</span> <span class="k">delete</span><span class="o">:</span> <span class="mi">10</span> <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retain-operation">
+<h3>保留操作<a class="headerlink" href="#retain-operation" title="永久链接至标题">¶</a></h3>
+<p>保留操作定义了一个Number保留键，表示要保留的字符数（其他库可能使用名称keep或skip）。可以使用Object定义可选属性键，以描述对字符范围的格式更改。属性Object中的null值表示删除该键。</p>
+<p>注意：没有必要保留文档的最后一个字符，因为这是隐含的。</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// Keep the next 5 characters</span>
+<span class="p">{</span> <span class="nx">retain</span><span class="o">:</span> <span class="mi">5</span> <span class="p">}</span>
+
+<span class="c1">// Keep and bold the next 5 characters</span>
+<span class="p">{</span> <span class="nx">retain</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="c1">// Keep and unbold the next 5 characters</span>
+<span class="c1">// More specifically, remove the bold key in the attributes Object</span>
+<span class="c1">// in the next 5 characters</span>
+<span class="p">{</span> <span class="nx">retain</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">null</span> <span class="p">}</span> <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>构造<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="constructor">
+<h3>constructor<a class="headerlink" href="#constructor" title="永久链接至标题">¶</a></h3>
+<p>创建一个新的Delta对象。</p>
+<div class="section" id="methods">
+<h4>方法<a class="headerlink" href="#methods" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">Delta()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">Delta(ops)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">Delta(delta)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h4>参数<a class="headerlink" href="#parameters" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>ops - 一系列操作</p></li>
+<li><p>delta - 将ops键设置为操作数组的对象</p></li>
+</ul>
+<p>注意：使用ops或delta构造时，不执行有效性/健全性检查。 新delta的内部ops数组也将从ops或delta.ops中分配，无需深度复制。</p>
+</div>
+<div class="section" id="example">
+<h4>例<a class="headerlink" href="#example" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">([</span>
+  <span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s1">&#39;Hello World&#39;</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">insert</span><span class="o">:</span> <span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="nx">attributes</span><span class="o">:</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span> <span class="p">},</span>
+<span class="p">]);</span>
+
+<span class="kr">const</span> <span class="nx">packet</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">delta</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">other</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">packet</span><span class="p">));</span>
+
+<span class="kr">const</span> <span class="nx">chained</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="insert">
+<h3>insert()<a class="headerlink" href="#insert" title="永久链接至标题">¶</a></h3>
+<p>附加插入操作。为可链接性返回此值。</p>
+<div class="section" id="id3">
+<h4>方法<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">insert(text,</span> <span class="pre">attributes)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">insert(embed,</span> <span class="pre">attributes)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h4>参数<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>text - 表示要插入的文本的字符串</p></li>
+<li><p>embed - 表示要插入的嵌入类型的对象</p></li>
+<li><p>attributes - 要应用的可选属性</p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h4>例<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">delta</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;#ccc&#39;</span> <span class="p">});</span>
+<span class="nx">delta</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;https://octodex.github.com/images/labtocat.png&#39;</span> <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="delete">
+<h3>delete()<a class="headerlink" href="#delete" title="永久链接至标题">¶</a></h3>
+<p>附加删除操作。为可链接性返回此值。</p>
+<div class="section" id="id6">
+<h4>方法<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">delete(length)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id7">
+<h4>参数<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>length - 要删除的字符数</p></li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h4>例<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">delta</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="retain">
+<h3>retain()<a class="headerlink" href="#retain" title="永久链接至标题">¶</a></h3>
+<p>附加保留操作。为可链接性返回此值。</p>
+<div class="section" id="id9">
+<h4>方法<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">retain(length,</span> <span class="pre">attributes)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h4>参数<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>length -要保留的字符数</p></li>
+<li><p>attributes - 要应用的可选属性</p></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h4>例<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">delta</span><span class="p">.</span><span class="nx">retain</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nx">retain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span> <span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;#0c6&#39;</span> <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>文档<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h2>
+<div class="section" id="concat">
+<h3>concat()<a class="headerlink" href="#concat" title="永久链接至标题">¶</a></h3>
+<p>返回一个新Delta，表示此和另一个文档Delta的操作的串联。</p>
+<div class="section" id="id13">
+<h4>方法<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">concat(other)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h4>参数<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>other - 文档Delta连接</p></li>
+</ul>
+</div>
+<div class="section" id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Delta - 连锁文件Delta</p></li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h4>例<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+
+<span class="c1">// {</span>
+<span class="c1">//   ops: [</span>
+<span class="c1">//     { insert: &#39;Hello&#39; },</span>
+<span class="c1">//     { insert: &#39;!&#39;, attributes: { bold: true } }</span>
+<span class="c1">//   ]</span>
+<span class="c1">// }</span>
+<span class="kr">const</span> <span class="nx">concat</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="diff">
+<h3>diff()<a class="headerlink" href="#diff" title="永久链接至标题">¶</a></h3>
+<p>返回表示两个文档之间差异的De​​lta。 （可选）接受发生更改的建议索引，通常表示更改前的光标位置。</p>
+<div class="section" id="id16">
+<h4>方法<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">diff(other)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diff(other,</span> <span class="pre">index)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id17">
+<h4>参数<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>other - 记录Delta以对抗差异</p></li>
+<li><p>index - 建议的变更发生的指数</p></li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h4>Returns<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Delta - 两个文件之间的区别</p></li>
+</ul>
+</div>
+<div class="section" id="id19">
+<h4>例<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">diff</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">diff</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// { ops: [{ retain: 5 }, { insert: &#39;!&#39; }] }</span>
+<span class="c1">// a.compose(diff) == b</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="eachline">
+<h3>eachLine()<a class="headerlink" href="#eachline" title="永久链接至标题">¶</a></h3>
+<p>迭代文档Delta，使用Delta和属性对象调用给定函数，表示线段。</p>
+<div class="section" id="id20">
+<h4>方法<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">eachLine(predicate,</span> <span class="pre">newline)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id21">
+<h4>参数<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>predicate - 调用每个线组的函数</p></li>
+<li><p>newline - 换行符，默认为 n</p></li>
+</ul>
+</div>
+<div class="section" id="id22">
+<h4>例<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello\n\n&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;World&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;octocat.png&#39;</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">align</span><span class="o">:</span> <span class="s1">&#39;right&#39;</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">);</span>
+
+<span class="nx">delta</span><span class="p">.</span><span class="nx">eachLine</span><span class="p">((</span><span class="nx">line</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+  <span class="c1">// Can return false to exit loop early</span>
+<span class="p">});</span>
+<span class="c1">// Should log:</span>
+<span class="c1">// { ops: [{ insert: &#39;Hello&#39; }] }, {}, 0</span>
+<span class="c1">// { ops: [] }, {}, 1</span>
+<span class="c1">// { ops: [{ insert: &#39;World&#39; }, { insert: { image: &#39;octocat.png&#39; } }] }, { align: &#39;right&#39; }, 2</span>
+<span class="c1">// { ops: [{ insert: &#39;!&#39; }] }, {}, 3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="invert">
+<h3>invert()<a class="headerlink" href="#invert" title="永久链接至标题">¶</a></h3>
+<p>返回一个倒三角形，它对基础文档增量具有相反的效果。 那是base.compose(delta).compose(inverted) === base.</p>
+<div class="section" id="id23">
+<h4>方法<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">invert(base)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id24">
+<h4>参数<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>base - 记录delta反转</p></li>
+</ul>
+</div>
+<div class="section" id="id25">
+<h4>Returns<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Delta - 倒三角形对基三角洲</p></li>
+</ul>
+</div>
+<div class="section" id="id26">
+<h4>例<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">base</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello\n&#39;</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;World&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">retain</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+  <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">inverted</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">invert</span><span class="p">(</span><span class="nx">base</span><span class="p">);</span> <span class="c1">// { ops: [</span>
+<span class="c1">//   { retain: 6, attributes: { bold: null } },</span>
+<span class="c1">//   { insert: &#39;World&#39; },</span>
+<span class="c1">//   { delete: 1 }</span>
+<span class="c1">// ]}</span>
+<span class="c1">// base.compose(delta).compose(inverted) === base</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id27">
+<h2>效用<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h2>
+<div class="section" id="filter">
+<h3>filter()<a class="headerlink" href="#filter" title="永久链接至标题">¶</a></h3>
+<p>返回传递给定函数的操作数组。</p>
+<div class="section" id="id28">
+<h4>方法<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">filter(predicate)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id29">
+<h4>参数<a class="headerlink" href="#id29" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>predicate - 用于测试每个操作的功能。返回true表示保持操作，否则返回false。</p></li>
+</ul>
+</div>
+<div class="section" id="id30">
+<h4>Returns<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Array - 过滤后的结果数组</p></li>
+</ul>
+</div>
+<div class="section" id="id31">
+<h4>例<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;https://octodex.github.com/images/labtocat.png&#39;</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;World!&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">delta</span>
+  <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">op</span> <span class="p">=&gt;</span> <span class="k">typeof</span> <span class="nx">op</span><span class="p">.</span><span class="nx">insert</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">op</span> <span class="p">=&gt;</span> <span class="nx">op</span><span class="p">.</span><span class="nx">insert</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="foreach">
+<h3>forEach()<a class="headerlink" href="#foreach" title="永久链接至标题">¶</a></h3>
+<p>迭代操作，为每个操作调用提供的函数。</p>
+<div class="section" id="id32">
+<h4>方法<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">forEach(predicate)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id33">
+<h4>参数<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>predicate - 函数在迭代期间调用，传入当前操作。</p></li>
+</ul>
+</div>
+<div class="section" id="id34">
+<h4>例<a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">delta</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">op</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">op</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="length">
+<h3>length()<a class="headerlink" href="#length" title="永久链接至标题">¶</a></h3>
+<p>返回Delta的长度，它是其操作长度的总和。</p>
+<div class="section" id="id35">
+<h4>方法<a class="headerlink" href="#id35" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">length()</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id36">
+<h4>例<a class="headerlink" href="#id36" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">();</span> <span class="c1">// Returns 5</span>
+
+<span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">retain</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+  <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// Returns 4</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="map">
+<h3>map()<a class="headerlink" href="#map" title="永久链接至标题">¶</a></h3>
+<p>返回一个新数组，其中包含在每个操作上调用提供函数的结果。</p>
+<div class="section" id="id37">
+<h4>方法<a class="headerlink" href="#id37" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">map(predicate)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id38">
+<h4>参数<a class="headerlink" href="#id38" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>predicate - 函数调用，传入当前操作，返回要返回的新数组的元素</p></li>
+</ul>
+</div>
+<div class="section" id="id39">
+<h4>Returns<a class="headerlink" href="#id39" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Array - 一个新数组，每个元素都是给定函数的结果。</p></li>
+</ul>
+</div>
+<div class="section" id="id40">
+<h4>例<a class="headerlink" href="#id40" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;https://octodex.github.com/images/labtocat.png&#39;</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;World!&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">delta</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">op</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">op</span><span class="p">.</span><span class="nx">insert</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">op</span><span class="p">.</span><span class="nx">insert</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="partition">
+<h3>partition()<a class="headerlink" href="#partition" title="永久链接至标题">¶</a></h3>
+<p>创建一个包含两个数组的数组，第一个数组包含传递给定函数的操作，另一个数组失败。</p>
+<div class="section" id="id41">
+<h4>方法<a class="headerlink" href="#id41" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">partition(predicate)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id42">
+<h4>参数<a class="headerlink" href="#id42" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>predicate - 函数调用，传入当前操作，返回该操作是否通过</p></li>
+</ul>
+</div>
+<div class="section" id="id43">
+<h4>Returns<a class="headerlink" href="#id43" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Array - 一个包含两个Arrays的新数组，第一个带有传递的操作，另一个带有失败的操作</p></li>
+</ul>
+</div>
+<div class="section" id="id44">
+<h4>例<a class="headerlink" href="#id44" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;https://octodex.github.com/images/labtocat.png&#39;</span> <span class="p">})</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;World!&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">partition</span><span class="p">(</span><span class="nx">op</span> <span class="p">=&gt;</span> <span class="k">typeof</span> <span class="nx">op</span><span class="p">.</span><span class="nx">insert</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">passed</span> <span class="o">=</span> <span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// [{ insert: &#39;Hello&#39;, attributes: { bold: true }},</span>
+<span class="c1">//  { insert: &#39;World&#39;}]</span>
+<span class="kr">const</span> <span class="nx">failed</span> <span class="o">=</span> <span class="nx">results</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="c1">// [{ insert: { image: &#39;https://octodex.github.com/images/labtocat.png&#39; }}]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="reduce">
+<h3>reduce()<a class="headerlink" href="#reduce" title="永久链接至标题">¶</a></h3>
+<p>对累加器应用给定函数，并将每个操作减少为单个值。</p>
+<div class="section" id="id45">
+<h4>方法<a class="headerlink" href="#id45" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">reduce(predicate,</span> <span class="pre">initialValue)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id46">
+<h4>参数<a class="headerlink" href="#id46" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>predicate - 每次迭代调用的函数，返回累计值</p></li>
+<li><p>initialValue - 传递给第一次调用谓词的初始值</p></li>
+</ul>
+</div>
+<div class="section" id="id47">
+<h4>Returns<a class="headerlink" href="#id47" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>any - 累计值</p></li>
+</ul>
+</div>
+<div class="section" id="id48">
+<h4>例<a class="headerlink" href="#id48" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">})</span>
+                         <span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">image</span><span class="o">:</span> <span class="s1">&#39;https://octodex.github.com/images/labtocat.png&#39;</span> <span class="p">})</span>
+                         <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;World!&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">length</span><span class="p">,</span> <span class="nx">op</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span>
+  <span class="nx">length</span> <span class="o">+</span> <span class="p">(</span><span class="nx">op</span><span class="p">.</span><span class="nx">insert</span><span class="p">.</span><span class="nx">length</span> <span class="o">||</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="slice">
+<h3>slice()<a class="headerlink" href="#slice" title="永久链接至标题">¶</a></h3>
+<p>返回带有操作子集的delta副本。</p>
+<div class="section" id="id49">
+<h4>方法<a class="headerlink" href="#id49" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">slice()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slice(start)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slice(start,</span> <span class="pre">end)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id50">
+<h4>参数<a class="headerlink" href="#id50" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>start - 启动子集索引，默认为0</p></li>
+<li><p>end - 子集的结束索引，默认为其余操作</p></li>
+</ul>
+</div>
+<div class="section" id="id51">
+<h4>例<a class="headerlink" href="#id51" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bold</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}).</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39; World&#39;</span><span class="p">);</span>
+
+<span class="c1">// {</span>
+<span class="c1">//   ops: [</span>
+<span class="c1">//     { insert: &#39;Hello&#39;, attributes: { bold: true } },</span>
+<span class="c1">//     { insert: &#39; World&#39; }</span>
+<span class="c1">//   ]</span>
+<span class="c1">// }</span>
+<span class="kr">const</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+
+<span class="c1">// { ops: [{ insert: &#39;World&#39; }] }</span>
+<span class="kr">const</span> <span class="nx">world</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+
+<span class="c1">// { ops: [{ insert: &#39; &#39; }] }</span>
+<span class="kr">const</span> <span class="nx">space</span> <span class="o">=</span> <span class="nx">delta</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id52">
+<h2>运营转型<a class="headerlink" href="#id52" title="永久链接至标题">¶</a></h2>
+<div class="section" id="compose">
+<h3>compose()<a class="headerlink" href="#compose" title="永久链接至标题">¶</a></h3>
+<p>返回一个Delta，相当于应用自己Delta的操作，然后是另一个Delta。</p>
+<div class="section" id="id53">
+<h4>方法<a class="headerlink" href="#id53" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">compose(other)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id54">
+<h4>参数<a class="headerlink" href="#id54" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>other - 三角洲组成</p></li>
+</ul>
+</div>
+<div class="section" id="id55">
+<h4>例<a class="headerlink" href="#id55" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">retain</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="k">delete</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">composed</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">compose</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// composed == new Delta().insert(&#39;ac&#39;);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="transform">
+<h3>transform()<a class="headerlink" href="#transform" title="永久链接至标题">¶</a></h3>
+<p>根据自己的运营改变Delta。</p>
+<div class="section" id="id56">
+<h4>方法<a class="headerlink" href="#id56" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">transform(other,</span> <span class="pre">priority</span> <span class="pre">=</span> <span class="pre">false)</span></code></p></li>
+<li><p>transform(index, priority = false) - transformPosition的别名</p></li>
+</ul>
+</div>
+<div class="section" id="id57">
+<h4>参数<a class="headerlink" href="#id57" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">other</span></code> - Delta to transform</p></li>
+<li><p>priority - 用于打破关系的布尔值。如果为true，那么这优先于其他，也就是说，它的行为被认为是“第一次”。</p></li>
+</ul>
+</div>
+<div class="section" id="id58">
+<h4>Returns<a class="headerlink" href="#id58" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Delta</span></code> - transformed Delta</p></li>
+</ul>
+</div>
+<div class="section" id="id59">
+<h4>例<a class="headerlink" href="#id59" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">retain</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">);</span>
+
+<span class="nx">a</span><span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// new Delta().retain(1).insert(&#39;b&#39;).retain(5).insert(&#39;c&#39;);</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span> <span class="c1">// new Delta().insert(&#39;b&#39;).retain(6).insert(&#39;c&#39;);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="transformposition">
+<h3>transformPosition()<a class="headerlink" href="#transformposition" title="永久链接至标题">¶</a></h3>
+<p>根据delta转换索引。用于表示光标/选择位置。</p>
+<div class="section" id="id60">
+<h4>方法<a class="headerlink" href="#id60" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">transformPosition(index,</span> <span class="pre">priority</span> <span class="pre">=</span> <span class="pre">false)</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id61">
+<h4>参数<a class="headerlink" href="#id61" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>index - 变换的索引</p></li>
+</ul>
+</div>
+<div class="section" id="id62">
+<h4>Returns<a class="headerlink" href="#id62" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>Number - 转化指数</p></li>
+</ul>
+</div>
+<div class="section" id="id63">
+<h4>例<a class="headerlink" href="#id63" title="永久链接至标题">¶</a></h4>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Delta</span><span class="p">().</span><span class="nx">retain</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+<span class="nx">delta</span><span class="p">.</span><span class="nx">transformPosition</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// 4</span>
+<span class="nx">delta</span><span class="p">.</span><span class="nx">transformPosition</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> <span class="c1">// 6</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="contents.html">delta-docs</a></h1>
+
+
+
+
+
+
+
+
+<h3>导航</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Delta</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-example">快速示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contents">内容</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#operations">操作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#construction">构造</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documents">文档</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utility">效用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operational-transform">运营转型</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">操作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#insert-operation">插入操作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-operation">删除操作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retain-operation">保留操作</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">构造</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constructor">constructor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#insert">insert()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete">delete()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retain">retain()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">文档</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#concat">concat()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diff">diff()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eachline">eachLine()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#invert">invert()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">效用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#filter">filter()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#foreach">forEach()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#length">length()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#map">map()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#partition">partition()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reduce">reduce()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slice">slice()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id52">运营转型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compose">compose()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transform">transform()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transformposition">transformPosition()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
+      <li>Previous: <a href="contents.html" title="上一章">delta 文档</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Band Cap.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.0+/06ca777</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

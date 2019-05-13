@@ -1,0 +1,671 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Band Cap
+# This file is distributed under the same license as the delta-docs package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: delta-docs \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-13 15:30+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../source/index.md:1
+msgid "Delta"
+msgstr "Delta"
+
+#: ../../source/index.md:6
+msgid ""
+"Deltas are a simple, yet expressive format that can be used to describe "
+"contents and changes. The format is JSON based, and is human readable, "
+"yet easily parsible by machines. Deltas can describe any rich text "
+"document, includes all text and formatting information, without the "
+"ambiguity and complexity of HTML."
+msgstr "Deltas是一种简单但富有表现力的格式，可用于描述内容和变化。 格式基于JSON，是人类可读的，但很容易被机器解析。 Deltas可以描述任何富文本文档，包括所有文本和格式信息，而不会产生HTML的模糊性和复杂性。"
+
+#: ../../source/index.md:8
+msgid ""
+"A Delta is made up of an Array of Operations, which describe changes to a"
+" document. They can be an insert, delete or retain. Note operations do "
+"not take an index. They always describe the change at the current index. "
+"Use retains to \"keep\" or \"skip\" certain parts of the document."
+msgstr "Delta由一组操作组成，用于描述文档的更改。 它们可以是插入，删除或保留。 注意操作不带索引。 他们总是描述当前指数的变化。使用保留来“保持”或“跳过”文档的某些部分。"
+
+#: ../../source/index.md:10
+msgid ""
+"Don’t be confused by its name Delta—Deltas represents both documents and "
+"changes to documents. If you think of Deltas as the instructions from "
+"going from one document to another, the way Deltas represent a document "
+"is by expressing the instructions starting from an empty document."
+msgstr "不要被其名称混淆Delta-Deltas代表文档和文档更改。如果您将Deltas视为从一个文档转到另一个文档的指令，则Deltas表示文档的方式是从空文档开始表达指令。"
+
+#: ../../source/index.md:12
+msgid "Quick Example"
+msgstr "快速示例"
+
+#: ../../source/index.md:49
+msgid ""
+"This README describes Deltas in its general form and API functionality. "
+"Additional information on the way Quill specifically uses Deltas can be "
+"found on its own Delta docs. A walkthough of the motivation and design "
+"thinking behind Deltas are on Designing the Delta Format."
+msgstr "本自述文件以其一般形式和API功能描述了Deltas。 关于Quill特别使用Deltas的方式的其他信息可以在其自己的Delta文档中找到。Deltas背后的动机和设计思想的演练是设计Delta格式。"
+
+#: ../../source/index.md:51
+msgid ""
+"This format is suitable for Operational Transform and defines several "
+"functions to support this use case."
+msgstr "此格式适用于Operational Transform，并定义了几个函数来支持此用例。"
+
+#: ../../source/index.md:53
+msgid "Contents"
+msgstr "内容"
+
+#: ../../source/index.md:55 ../../source/index.md:93
+msgid "Operations"
+msgstr "操作"
+
+#: ../../source/index.md:57 ../../source/index.md:64
+msgid "insert"
+msgstr "insert"
+
+#: ../../source/index.md:58 ../../source/index.md:65
+msgid "delete"
+msgstr "delete"
+
+#: ../../source/index.md:59 ../../source/index.md:66
+msgid "retain"
+msgstr "retain"
+
+#: ../../source/index.md:61 ../../source/index.md:152
+msgid "Construction"
+msgstr "构造"
+
+#: ../../source/index.md:63 ../../source/index.md:154
+msgid "constructor"
+msgstr "constructor"
+
+#: ../../source/index.md:68 ../../source/index.md:251
+msgid "Documents"
+msgstr "文档"
+
+#: ../../source/index.md:70
+msgid ""
+"These methods called on or with non-document Deltas will result in "
+"undefined behavior."
+msgstr "调用或使用非文档Deltas的这些方法将导致未定义的行为。"
+
+#: ../../source/index.md:72
+msgid "concat"
+msgstr "concat"
+
+#: ../../source/index.md:73
+msgid "diff"
+msgstr "diff"
+
+#: ../../source/index.md:74
+msgid "eachLine"
+msgstr "eachLine"
+
+#: ../../source/index.md:75
+msgid "invert"
+msgstr "invert"
+
+#: ../../source/index.md:77 ../../source/index.md:385
+msgid "Utility"
+msgstr "效用"
+
+#: ../../source/index.md:79
+msgid "filter"
+msgstr "filter"
+
+#: ../../source/index.md:80
+msgid "forEach"
+msgstr "forEach"
+
+#: ../../source/index.md:81
+msgid "length"
+msgstr "length"
+
+#: ../../source/index.md:82
+msgid "map"
+msgstr "map"
+
+#: ../../source/index.md:83
+msgid "partition"
+msgstr "partition"
+
+#: ../../source/index.md:84
+msgid "reduce"
+msgstr "reduce"
+
+#: ../../source/index.md:85
+msgid "slice"
+msgstr "slice"
+
+#: ../../source/index.md:87 ../../source/index.md:597
+msgid "Operational Transform"
+msgstr "运营转型"
+
+#: ../../source/index.md:89
+msgid "compose"
+msgstr "compose"
+
+#: ../../source/index.md:90
+msgid "transform"
+msgstr "transform"
+
+#: ../../source/index.md:91
+msgid "transformPosition"
+msgstr "transformPosition"
+
+#: ../../source/index.md:95
+msgid "Insert Operation"
+msgstr "插入操作"
+
+#: ../../source/index.md:97
+msgid ""
+"Insert operations have an insert key defined. A String value represents "
+"inserting text. Any other type represents inserting an embed (however "
+"only one level of object comparison will be performed for equality)."
+msgstr "插入操作定义了插入键。 String值表示插入文本。任何其他类型表示插入嵌入（但是只会执行一级对象比较以获得相等性）。"
+
+#: ../../source/index.md:99
+msgid ""
+"In both cases of text and embeds, an optional attributes key can be "
+"defined with an Object to describe additonal formatting information. "
+"Formats can be changed by the retain operation."
+msgstr "在文本和嵌入的两种情况下，可以使用Object定义可选属性键以描述附加格式信息。 可以通过retain操作更改格式。"
+
+#: ../../source/index.md:124
+msgid "Delete Operation"
+msgstr "删除操作"
+
+#: ../../source/index.md:126
+msgid ""
+"Delete operations have a Number delete key defined representing the "
+"number of characters to delete. All embeds have a length of 1."
+msgstr "删除操作定义了一个数字删除键，表示要删除的字符数。所有嵌入的长度均为1。"
+
+#: ../../source/index.md:133
+msgid "Retain Operation"
+msgstr "保留操作"
+
+#: ../../source/index.md:135
+msgid ""
+"Retain operations have a Number retain key defined representing the "
+"number of characters to keep (other libraries might use the name keep or "
+"skip). An optional attributes key can be defined with an Object to "
+"describe formatting changes to the character range. A value of null in "
+"the attributes Object represents removal of that key."
+msgstr "保留操作定义了一个Number保留键，表示要保留的字符数（其他库可能使用名称keep或skip）。可以使用Object定义可选属性键，以描述对字符范围的格式更改。属性Object中的null值表示删除该键。"
+
+#: ../../source/index.md:137
+msgid ""
+"Note: It is not necessary to retain the last characters of a document as "
+"this is implied."
+msgstr "注意：没有必要保留文档的最后一个字符，因为这是隐含的。"
+
+#: ../../source/index.md:156
+msgid "Creates a new Delta object."
+msgstr "创建一个新的Delta对象。"
+
+#: ../../source/index.md:158 ../../source/index.md:192
+#: ../../source/index.md:216 ../../source/index.md:236
+#: ../../source/index.md:257 ../../source/index.md:290
+#: ../../source/index.md:320 ../../source/index.md:356
+#: ../../source/index.md:391 ../../source/index.md:423
+#: ../../source/index.md:445 ../../source/index.md:466
+#: ../../source/index.md:503 ../../source/index.md:535
+#: ../../source/index.md:566 ../../source/index.md:603
+#: ../../source/index.md:626 ../../source/index.md:660
+msgid "Methods"
+msgstr "方法"
+
+#: ../../source/index.md:160
+msgid "new Delta()"
+msgstr "new Delta()"
+
+#: ../../source/index.md:161
+msgid "new Delta(ops)"
+msgstr "new Delta(ops)"
+
+#: ../../source/index.md:162
+msgid "new Delta(delta)"
+msgstr "new Delta(delta)"
+
+#: ../../source/index.md:164 ../../source/index.md:197
+#: ../../source/index.md:220 ../../source/index.md:240
+#: ../../source/index.md:261 ../../source/index.md:295
+#: ../../source/index.md:324 ../../source/index.md:360
+#: ../../source/index.md:395 ../../source/index.md:427
+#: ../../source/index.md:470 ../../source/index.md:507
+#: ../../source/index.md:539 ../../source/index.md:572
+#: ../../source/index.md:607 ../../source/index.md:631
+#: ../../source/index.md:664
+msgid "Parameters"
+msgstr "参数"
+
+#: ../../source/index.md:166
+msgid "ops - Array of operations"
+msgstr "ops - 一系列操作"
+
+#: ../../source/index.md:167
+msgid "delta - Object with an ops key set to an array of operations"
+msgstr "delta - 将ops键设置为操作数组的对象"
+
+#: ../../source/index.md:169
+msgid ""
+"Note: No validity/sanity check is performed when constructed with ops or "
+"delta. The new delta's internal ops array will also be assigned from ops "
+"or delta.ops without deep copying."
+msgstr "注意：使用ops或delta构造时，不执行有效性/健全性检查。 新delta的内部ops数组也将从ops或delta.ops中分配，无需深度复制。"
+
+#: ../../source/index.md:171 ../../source/index.md:203
+#: ../../source/index.md:224 ../../source/index.md:245
+#: ../../source/index.md:269 ../../source/index.md:304
+#: ../../source/index.md:329 ../../source/index.md:368
+#: ../../source/index.md:403 ../../source/index.md:431
+#: ../../source/index.md:449 ../../source/index.md:478
+#: ../../source/index.md:515 ../../source/index.md:548
+#: ../../source/index.md:577 ../../source/index.md:611
+#: ../../source/index.md:641 ../../source/index.md:672
+msgid "Example"
+msgstr "例"
+
+#: ../../source/index.md:188
+msgid "insert()"
+msgstr "insert()"
+
+#: ../../source/index.md:190
+msgid "Appends an insert operation. Returns this for chainability."
+msgstr "附加插入操作。为可链接性返回此值。"
+
+#: ../../source/index.md:194
+msgid "insert(text, attributes)"
+msgstr "insert(text, attributes)"
+
+#: ../../source/index.md:195
+msgid "insert(embed, attributes)"
+msgstr "insert(embed, attributes)"
+
+#: ../../source/index.md:199
+msgid "text - String representing text to insert"
+msgstr "text - 表示要插入的文本的字符串"
+
+#: ../../source/index.md:200
+msgid "embed - Object representing embed type to insert"
+msgstr "embed - 表示要插入的嵌入类型的对象"
+
+#: ../../source/index.md:201 ../../source/index.md:243
+msgid "attributes - Optional attributes to apply"
+msgstr "attributes - 要应用的可选属性"
+
+#: ../../source/index.md:212
+msgid "delete()"
+msgstr "delete()"
+
+#: ../../source/index.md:214
+msgid "Appends a delete operation. Returns this for chainability."
+msgstr "附加删除操作。为可链接性返回此值。"
+
+#: ../../source/index.md:218
+msgid "delete(length)"
+msgstr "delete(length)"
+
+#: ../../source/index.md:222
+msgid "length - Number of characters to delete"
+msgstr "length - 要删除的字符数"
+
+#: ../../source/index.md:232
+msgid "retain()"
+msgstr "retain()"
+
+#: ../../source/index.md:234
+msgid "Appends a retain operation. Returns this for chainability."
+msgstr "附加保留操作。为可链接性返回此值。"
+
+#: ../../source/index.md:238
+msgid "retain(length, attributes)"
+msgstr "retain(length, attributes)"
+
+#: ../../source/index.md:242
+msgid "length - Number of characters to retain"
+msgstr "length -要保留的字符数"
+
+#: ../../source/index.md:253
+msgid "concat()"
+msgstr "concat()"
+
+#: ../../source/index.md:255
+msgid ""
+"Returns a new Delta representing the concatenation of this and another "
+"document Delta's operations."
+msgstr "返回一个新Delta，表示此和另一个文档Delta的操作的串联。"
+
+#: ../../source/index.md:259
+msgid "concat(other)"
+msgstr "concat(other)"
+
+#: ../../source/index.md:263
+msgid "other - Document Delta to concatenate"
+msgstr "other - 文档Delta连接"
+
+#: ../../source/index.md:265 ../../source/index.md:300
+#: ../../source/index.md:364 ../../source/index.md:399
+#: ../../source/index.md:474 ../../source/index.md:511
+#: ../../source/index.md:544 ../../source/index.md:637
+#: ../../source/index.md:668
+msgid "Returns"
+msgstr "Returns"
+
+#: ../../source/index.md:267
+msgid "Delta - Concatenated document Delta"
+msgstr "Delta - 连锁文件Delta"
+
+#: ../../source/index.md:286
+msgid "diff()"
+msgstr "diff()"
+
+#: ../../source/index.md:288
+msgid ""
+"Returns a Delta representing the difference between two documents. "
+"Optionally, accepts a suggested index where change took place, often "
+"representing a cursor position before change."
+msgstr "返回表示两个文档之间差异的De​​lta。 （可选）接受发生更改的建议索引，通常表示更改前的光标位置。"
+
+#: ../../source/index.md:292
+msgid "diff(other)"
+msgstr "diff(other)"
+
+#: ../../source/index.md:293
+msgid "diff(other, index)"
+msgstr "diff(other, index)"
+
+#: ../../source/index.md:297
+msgid "other - Document Delta to diff against"
+msgstr "other - 记录Delta以对抗差异"
+
+#: ../../source/index.md:298
+msgid "index - Suggested index where change took place"
+msgstr "index - 建议的变更发生的指数"
+
+#: ../../source/index.md:302
+msgid "Delta - difference between the two documents"
+msgstr "Delta - 两个文件之间的区别"
+
+#: ../../source/index.md:316
+msgid "eachLine()"
+msgstr "eachLine()"
+
+#: ../../source/index.md:318
+msgid ""
+"Iterates through document Delta, calling a given function with a Delta "
+"and attributes object, representing the line segment."
+msgstr "迭代文档Delta，使用Delta和属性对象调用给定函数，表示线段。"
+
+#: ../../source/index.md:322
+msgid "eachLine(predicate, newline)"
+msgstr "eachLine(predicate, newline)"
+
+#: ../../source/index.md:326
+msgid "predicate - function to call on each line group"
+msgstr "predicate - 调用每个线组的函数"
+
+#: ../../source/index.md:327
+msgid "newline - newline character, defaults to \\n"
+msgstr "newline - 换行符，默认为 \\n"
+
+#: ../../source/index.md:352
+msgid "invert()"
+msgstr "invert()"
+
+#: ../../source/index.md:354
+msgid ""
+"Returned an inverted delta that has the opposite effect of against a base"
+" document delta. That is base.compose(delta).compose(inverted) === base."
+msgstr "返回一个倒三角形，它对基础文档增量具有相反的效果。 那是base.compose(delta).compose(inverted) === base."
+
+#: ../../source/index.md:358
+msgid "invert(base)"
+msgstr "invert(base)"
+
+#: ../../source/index.md:362
+msgid "base - Document delta to invert against"
+msgstr "base - 记录delta反转"
+
+#: ../../source/index.md:366
+msgid "Delta - inverted delta against the base delta"
+msgstr "Delta - 倒三角形对基三角洲"
+
+#: ../../source/index.md:387
+msgid "filter()"
+msgstr "filter()"
+
+#: ../../source/index.md:389
+msgid "Returns an array of operations that passes a given function."
+msgstr "返回传递给定函数的操作数组。"
+
+#: ../../source/index.md:393
+msgid "filter(predicate)"
+msgstr "filter(predicate)"
+
+#: ../../source/index.md:397
+msgid ""
+"predicate - Function to test each operation against. Return true to keep "
+"the operation, false otherwise."
+msgstr "predicate - 用于测试每个操作的功能。返回true表示保持操作，否则返回false。"
+
+#: ../../source/index.md:401
+msgid "Array - Filtered resulting array"
+msgstr "Array - 过滤后的结果数组"
+
+#: ../../source/index.md:419
+msgid "forEach()"
+msgstr "forEach()"
+
+#: ../../source/index.md:421
+msgid ""
+"Iterates through operations, calling the provided function for each "
+"operation."
+msgstr "迭代操作，为每个操作调用提供的函数。"
+
+#: ../../source/index.md:425
+msgid "forEach(predicate)"
+msgstr "forEach(predicate)"
+
+#: ../../source/index.md:429
+msgid ""
+"predicate - Function to call during iteration, passing in the current "
+"operation."
+msgstr "predicate - 函数在迭代期间调用，传入当前操作。"
+
+#: ../../source/index.md:441 ../../source/index.md:447
+msgid "length()"
+msgstr "length()"
+
+#: ../../source/index.md:443
+msgid ""
+"Returns length of a Delta, which is the sum of the lengths of its "
+"operations."
+msgstr "返回Delta的长度，它是其操作长度的总和。"
+
+#: ../../source/index.md:462
+msgid "map()"
+msgstr "map()"
+
+#: ../../source/index.md:464
+msgid ""
+"Returns a new array with the results of calling provided function on each"
+" operation."
+msgstr "返回一个新数组，其中包含在每个操作上调用提供函数的结果。"
+
+#: ../../source/index.md:468
+msgid "map(predicate)"
+msgstr "map(predicate)"
+
+#: ../../source/index.md:472
+msgid ""
+"predicate - Function to call, passing in the current operation, returning"
+" an element of the new array to be returned"
+msgstr "predicate - 函数调用，传入当前操作，返回要返回的新数组的元素"
+
+#: ../../source/index.md:476
+msgid ""
+"Array - A new array with each element being the result of the given "
+"function."
+msgstr "Array - 一个新数组，每个元素都是给定函数的结果。"
+
+#: ../../source/index.md:499
+msgid "partition()"
+msgstr "partition()"
+
+#: ../../source/index.md:501
+msgid ""
+"Create an array of two arrays, the first with operations that pass the "
+"given function, the other that failed."
+msgstr "创建一个包含两个数组的数组，第一个数组包含传递给定函数的操作，另一个数组失败。"
+
+#: ../../source/index.md:505
+msgid "partition(predicate)"
+msgstr "partition(predicate)"
+
+#: ../../source/index.md:509
+msgid ""
+"predicate - Function to call, passing in the current operation, returning"
+" whether that operation passed"
+msgstr "predicate - 函数调用，传入当前操作，返回该操作是否通过"
+
+#: ../../source/index.md:513
+msgid ""
+"Array - A new array of two Arrays, the first with passed operations, the "
+"other with failed operations"
+msgstr "Array - 一个包含两个Arrays的新数组，第一个带有传递的操作，另一个带有失败的操作"
+
+#: ../../source/index.md:531
+msgid "reduce()"
+msgstr "reduce()"
+
+#: ../../source/index.md:533
+msgid ""
+"Applies given function against an accumulator and each operation to "
+"reduce to a single value."
+msgstr "对累加器应用给定函数，并将每个操作减少为单个值。"
+
+#: ../../source/index.md:537
+msgid "reduce(predicate, initialValue)"
+msgstr "reduce(predicate, initialValue)"
+
+#: ../../source/index.md:541
+msgid "predicate - Function to call per iteration, returning an accumulated value"
+msgstr "predicate - 每次迭代调用的函数，返回累计值"
+
+#: ../../source/index.md:542
+msgid "initialValue - Initial value to pass to first call to predicate"
+msgstr "initialValue - 传递给第一次调用谓词的初始值"
+
+#: ../../source/index.md:546
+msgid "any - the accumulated value"
+msgstr "any - 累计值"
+
+#: ../../source/index.md:562 ../../source/index.md:568
+msgid "slice()"
+msgstr "slice()"
+
+#: ../../source/index.md:564
+msgid "Returns copy of delta with subset of operations."
+msgstr "返回带有操作子集的delta副本。"
+
+#: ../../source/index.md:569
+msgid "slice(start)"
+msgstr "slice(start)"
+
+#: ../../source/index.md:570
+msgid "slice(start, end)"
+msgstr "slice(start, end)"
+
+#: ../../source/index.md:574
+msgid "start - Start index of subset, defaults to 0"
+msgstr "start - 启动子集索引，默认为0"
+
+#: ../../source/index.md:575
+msgid "end - End index of subset, defaults to rest of operations"
+msgstr "end - 子集的结束索引，默认为其余操作"
+
+#: ../../source/index.md:599
+msgid "compose()"
+msgstr "compose()"
+
+#: ../../source/index.md:601
+msgid ""
+"Returns a Delta that is equivalent to applying the operations of own "
+"Delta, followed by another Delta."
+msgstr "返回一个Delta，相当于应用自己Delta的操作，然后是另一个Delta。"
+
+#: ../../source/index.md:605
+msgid "compose(other)"
+msgstr "compose(other)"
+
+#: ../../source/index.md:609
+msgid "other - Delta to compose"
+msgstr "other - 三角洲组成"
+
+#: ../../source/index.md:622
+msgid "transform()"
+msgstr "transform()"
+
+#: ../../source/index.md:624
+msgid "Transform given Delta against own operations."
+msgstr "根据自己的运营改变Delta。"
+
+#: ../../source/index.md:628
+msgid "transform(other, priority = false)"
+msgstr "transform(other, priority = false)"
+
+#: ../../source/index.md:629
+msgid "transform(index, priority = false) - Alias for transformPosition"
+msgstr "transform(index, priority = false) - transformPosition的别名"
+
+#: ../../source/index.md:633
+msgid "other - Delta to transform"
+msgstr "other - Delta to transform"
+
+#: ../../source/index.md:634
+msgid ""
+"priority - Boolean used to break ties. If true, then this takes priority "
+"over other, that is, its actions are considered to happen \"first.\""
+msgstr "priority - 用于打破关系的布尔值。如果为true，那么这优先于其他，也就是说，它的行为被认为是“第一次”。"
+
+#: ../../source/index.md:639
+msgid "Delta - transformed Delta"
+msgstr "Delta - transformed Delta"
+
+#: ../../source/index.md:656
+msgid "transformPosition()"
+msgstr "transformPosition()"
+
+#: ../../source/index.md:658
+msgid ""
+"Transform an index against the delta. Useful for representing "
+"cursor/selection positions."
+msgstr "根据delta转换索引。用于表示光标/选择位置。"
+
+#: ../../source/index.md:662
+msgid "transformPosition(index, priority = false)"
+msgstr "transformPosition(index, priority = false)"
+
+#: ../../source/index.md:666
+msgid "index - index to transform"
+msgstr "index - 变换的索引"
+
+#: ../../source/index.md:670
+msgid "Number - transformed index"
+msgstr "Number - 转化指数"
+
